@@ -1,0 +1,129 @@
+.timeline {
+  margin-top: 3.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.timeline__item {
+  display: grid;
+  grid-template-columns: 130px 48px 1fr;
+  gap: 0 1rem;
+  align-items: start;
+}
+
+/* Year label */
+.timeline__year {
+  padding-top: 1.25rem;
+  text-align: right;
+}
+.timeline__year span {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+/* Spine (dot + vertical line) */
+.timeline__spine {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.timeline__dot {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1rem;
+  border: 1px solid var(--border);
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.timeline__dot--work {
+  background: var(--accent-dim);
+  color: var(--accent);
+  border-color: var(--border-accent);
+}
+.timeline__dot--edu {
+  background: rgba(167, 139, 250, 0.12);
+  color: #a78bfa;
+  border-color: rgba(167, 139, 250, 0.3);
+}
+.timeline__item:hover .timeline__dot {
+  box-shadow: 0 0 20px var(--accent-glow);
+}
+
+.timeline__line {
+  width: 1px;
+  flex: 1;
+  min-height: 2rem;
+  background: linear-gradient(to bottom, var(--border-accent), var(--border));
+  margin: 4px 0;
+}
+
+/* Card */
+.timeline__card {
+  padding: 1.25rem 1.4rem;
+  margin-bottom: 1.25rem;
+}
+
+.timeline__card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.3rem;
+}
+
+.timeline__card-title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.timeline__type-badge {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.6rem;
+  border-radius: 100px;
+  flex-shrink: 0;
+}
+.timeline__type-badge--work {
+  background: var(--accent-dim);
+  color: var(--accent);
+}
+.timeline__type-badge--edu {
+  background: rgba(167, 139, 250, 0.12);
+  color: #a78bfa;
+}
+
+.timeline__org {
+  font-size: 0.8rem;
+  color: var(--accent);
+  margin-bottom: 0.6rem;
+  font-family: var(--font-mono);
+}
+
+.timeline__desc {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* ── Mobile ── */
+@media (max-width: 640px) {
+  .timeline__item {
+    grid-template-columns: 40px 1fr;
+  }
+  .timeline__year {
+    display: none;
+  }
+}
