@@ -40,7 +40,7 @@ export default function About() {
             {[
               { value: "4+", label: "Years of Experience" },
               { value: "10+", label: "Projects Shipped" },
-              { value: "500+", label: "GitHub Stars" },
+              { value: "5+", label: "GitHub Stars" },
               { value: "∞", label: "Coffee Consumed" },
             ].map((stat, i) => (
               <div key={i} className={`glass-card about__stat-card reveal reveal-delay-${i + 1}`}>

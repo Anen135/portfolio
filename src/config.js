@@ -1,48 +1,55 @@
 /**
  * =============================================
  * PORTFOLIO CONFIGURATION FILE
- * Edit this file to personalize your portfolio
  * =============================================
  */
 
 export const config = {
   // ── Personal Info ──────────────────────────
   name: "Anen Barno",
-  title: "Unity Developer / System Engineer",
+  title: "Systems Engineer | Unity & C# Developer | Fullstack Expert",
   tagline:
-    "I build robust game systems and scalable architectures with a focus on clean code and performance. Specialist in Unity, C#, and high-level system design. Advocate for DI and decoupled architectures.",
-  avatar: null, // Set a URL or relative path to your photo, e.g. "/avatar.jpg"
+    "Senior-level C++ background transitioning into high-performance Unity systems and modern Fullstack architectures. Specialist in engine design, automation, and pixel-perfect UI.",
+  avatar: null, 
 
   // ── Contact ────────────────────────────────
   email: "whoyou1994j4920@gmail.com",
   github: "https://github.com/Anen135",
   linkedin: "https://linkedin.com/in/yourusername",
   telegram: "https://t.me/deadmaidenILS",
-  cvUrl: "/cv.pdf", // Path to your CV file in /public folder
+  cvUrl: "/cv.pdf",
 
   // ── About Me ───────────────────────────────
   about: {
-    bio: "I am a professional software developer and system engineer with a deep focus on Unity and game architecture. My approach is rooted in strict software patterns: I prioritize Dependency Injection and event-driven systems over global singletons. Beyond game dev, I have extensive experience in database design for SaaS and automation tools. I'm also passionate about mentoring the next generation of programmers, helping them navigate complex topics like asynchronous programming and clean API design.",
+    bio: "I am a systems-oriented developer with a 7-year foundation in C++. My transition from low-level engineering (ASM, Reverse Engineering) to modern frameworks like Unity, Next.js, and Vue has shaped my unique approach: combining raw performance with elegant, modern interfaces. Whether I'm architecting a decoupled Unity system or building a sleek UI with Tailwind and Shadcn, I focus on scalability, performance, and my 'Code Manifesto' of architectural purity.",
     highlights: [
-      "Expertise in Unity (C#) & System Architecture",
-      "Strong advocate for Dependency Injection (DI) & Decoupled Design",
-      "Experienced in Database Architecture (SQL/SaaS) & API Design",
-      "Technical Mentor for programming students",
+      "7+ years of C-family programming (Expert C++, C#, JS/TS)",
+      "High-performance Unity development (DI-focused) & Multi-engine expertise",
+      "Modern Web Stack: Next.js, Vue, Vite, and Tailwind CSS",
+      "UI/UX Implementation: Shadcn, Bootstrap, and pixel-perfect design",
+      "Mobile development expert using Expo and .NET MAUI",
     ],
   },
 
   // ── Skills ─────────────────────────────────
   skills: [
-    { name: "C#", level: 95, category: "Language" },
-    { name: "Python", level: 85, category: "Language" },
-    { name: "JavaScript", level: 80, category: "Language" },
-    { name: "Unity 3D", level: 95, category: "Engine" },
-    { name: "Dependency Injection", level: 90, category: "Architecture" },
-    { name: "SQL / PostgreSQL", level: 88, category: "Database" },
-    { name: "Shader Programming", level: 75, category: "Graphics" },
-    { name: "Git / LFS", level: 90, category: "DevOps" },
-    { name: "PowerShell Automation", level: 82, category: "Tooling" },
-    { name: "REST API Design", level: 85, category: "Backend" },
+    { name: "C++ (Senior)", level: 98, category: "Language" },
+    { name: "C# / .NET", level: 90, category: "Language" },
+    { name: "Unity 3D", level: 90, category: "Engine" },
+    { name: "Ren'Py", level: 85, category: "Engine" },
+    { name: "Game Maker Studio", level: 80, category: "Engine" },
+    { name: "JavaScript / TypeScript", level: 92, category: "Language" },
+    { name: "Next.js / Vue", level: 88, category: "Frontend" },
+    { name: "React JS", level: 90, category: "Frontend" },
+    { name: "Electron", level: 80, category: "Frontend" },
+    { name: "Tailwind / Shadcn", level: 95, category: "UI/UX" },
+    { name: "Bootstrap", level: 85, category: "UI/UX" },
+    { name: "Vite", level: 90, category: "Tooling" },
+    { name: "Expo / React Native", level: 85, category: "Mobile" },
+    { name: ".NET MAUI", level: 85, category: "Mobile" },
+    { name: "Python", level: 90, category: "Language" },
+    { name: "System Architecture (DI)", level: 95, category: "Architecture" },
+    { name: "Git / CI-CD / LFS", level: 90, category: "DevOps" },
   ],
 
   // ── Projects ───────────────────────────────
@@ -50,44 +57,35 @@ export const config = {
     {
       title: "Lucy Framework",
       description:
-        "A core architectural framework for Unity projects featuring custom state machines, entity management, and a robust audio service layer built with DI principles.",
+        "A modular architectural core for Unity. Enforces strict decoupling through custom State Machines and DI-based services. Focuses on logic/engine separation.",
       tags: ["C#", "Unity", "Architecture", "DI"],
-      github: "https://github.com/Anen135/Lucy.Core",
+      github: null,
       demo: null,
       featured: true,
     },
     {
-      title: "Stoiki Project",
+      title: "GovTech Interface Bridge",
       description:
-        "A complex Unity-based project focused on advanced scene management and Git LFS asset optimization.",
-      tags: ["Unity", "C#", "Git LFS", "System Design"],
-      github: "https://github.com/Anen135/Stoiki_project",
+        "Engineered a critical bridge between legacy kernels and modern web interfaces. Solved complex undocumented API challenges in high-compliance environments.",
+      tags: ["Angular", "Lua", "Reverse Engineering", "Enterprise"],
+      github: null,
       demo: null,
       featured: true,
     },
     {
-      title: "TASTAR",
+      title: "Landing Page & UI Kit",
       description:
-        "Modern landing page and web interface project emphasizing clean design and structured content hierarchy.",
-      tags: ["HTML/CSS", "JS", "UI/UX"],
-      github: "https://github.com/Anen135/TASTAR",
+        "A high-performance web projects demonstrating modern UI/UX principles using Vite, Tailwind, and advanced component structures.",
+      tags: ["Vite", "Tailwind", "Shadcn", "UI/UX"],
+      github: null,
       demo: null,
       featured: true,
     },
     {
-      title: "YesUR",
+      title: "Automation & LLM Tools",
       description:
-        "Unity asset management and model integration project utilizing heavy Git history rewriting and LFS for large scale resources.",
-      tags: ["Unity", "Asset Pipeline", "Git"],
-      github: "https://github.com/Anen135/YesUR",
-      demo: null,
-      featured: false,
-    },
-    {
-      title: "Custom PowerShell API Toolkit",
-      description:
-        "A set of command-line tools for rapid API testing and automated task management.",
-      tags: ["PowerShell", "Automation", "API"],
+        "Python-based suite for automating interactive web-tasks. Features intelligent parsing and automated data flow management.",
+      tags: ["Python", "LLM", "Automation", "JS"],
       github: null,
       demo: null,
       featured: false,
@@ -98,35 +96,35 @@ export const config = {
   timeline: [
     {
       type: "work",
-      year: "2024 – Present",
-      title: "Unity Developer & System Engineer",
-      org: "Freelance / Independent Projects",
+      year: "2025 – Present",
+      title: "Unity Systems & Fullstack Developer",
+      org: "Independent Projects",
       description:
-        "Architecting game systems (Lucy core) with a focus on decoupling and performance. Managing complex version control environments and project infrastructures.",
+        "Refactoring codebases for scalability. Building modern web tools with Next.js, Vite, and Shadcn, ensuring high performance across all platforms.",
     },
     {
       type: "work",
-      year: "2023 – Present",
-      title: "Programming Instructor & Mentor",
-      org: "Educational Initiatives",
+      year: "2024 – 2025",
+      title: "Software Engineer",
+      org: "GovTech IT Corporation",
       description:
-        "Teaching students database management (SQL), async/await patterns, and clean API request handling. Developing training materials and practical coding labs.",
+        "Integrated modern frontends with legacy kernels. Managed strict bureaucratic and technical constraints while maintaining system integrity.",
     },
     {
       type: "work",
-      year: "2021 – 2023",
-      title: "Software Developer",
-      org: "IT Startup / SaaS Development",
+      year: "2022 – 2024",
+      title: "Fullstack & Automation Developer",
+      org: "Freelance",
       description:
-        "Designed multi-profile database schemas and implemented scalable backends for task management systems.",
+        "Built business-focused mobile apps with Expo and automated complex workflows using Python. Focus on bridging the gap between back-end logic and front-end usability.",
     },
     {
       type: "edu",
-      year: "2026 (In Progress)",
-      title: "National Unified Testing (ENT) Prep",
-      org: "Self-Study / Intensive Prep",
+      year: "2019 – 2026",
+      title: "Advanced Systems Engineering",
+      org: "Self-Directed Research",
       description:
-        "Focusing on Mathematics and Information Technology to advance academic credentials and technical foundation.",
+        "7-year deep dive into C-family languages, security, and networking. Established a career-spanning focus on architectural clean-code (Code Manifesto).",
     },
   ],
 };
