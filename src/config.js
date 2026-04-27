@@ -64,12 +64,12 @@ export const config = {
       featured: true,
     },
     {
-      title: "GovTech Interface Bridge",
+      title: "Winui3",
       description:
-        "Engineered a critical bridge between legacy kernels and modern web interfaces. Solved complex undocumented API challenges in high-compliance environments.",
-      tags: ["Angular", "Lua", "Reverse Engineering", "Enterprise"],
-      github: null,
-      demo: null,
+        "A high-performance, windows orientated UI library built with C++. Focuses on native performance and modern design principles for cli apps.",
+      tags: ["C++", "Windows", "Library", "CLI"],
+      github: "https://github.com/Anen135/winui3",
+      demo: "/pages/winui3-demo.html",
       featured: true,
     },
     {

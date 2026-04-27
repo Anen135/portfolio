@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>WinUI3 — Console UI Library</title>
+<meta name="description" content="A lightweight C++ library for building interactive console-based user interfaces on Windows. Component-based, event-driven, zero dependencies."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Familjen+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+/* ── Reset & Tokens ──────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:        #0b0e0f;
+  --bg2:       #111518;
+  --bg3:       #181e21;
+  --line:      #1e2529;
+  --muted:     #3d4d55;
+  --dim:       #6b7f8a;
+  --text:      #c8d8e0;
+  --bright:    #eaf4f8;
+  --green:     #3bffb0;
+  --green-dim: rgba(59,255,176,.10);
+  --green-mid: rgba(59,255,176,.25);
+  --amber:     #ffcc44;
+  --blue:      #44aaff;
+  --font-ui:   'Familjen Grotesk', sans-serif;
+  --font-code: 'DM Mono', monospace;
+  --r:         6px;
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-ui);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+::selection { background: var(--green-mid); color: var(--bright); }
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 3px; }
+
+/* ── Scanline overlay ────────────────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 999;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,.07) 2px,
+    rgba(0,0,0,.07) 4px
+  );
+}
+
+/* ── Layout helpers ──────────────────────────────────────────── */
+.wrap { max-width: 900px; margin: 0 auto; padding: 0 1.5rem; }
+section { padding: 5rem 0; }
+
+/* ── NAV ─────────────────────────────────────────────────────── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  border-bottom: 1px solid var(--line);
+  background: rgba(11,14,15,.85);
+  backdrop-filter: blur(12px);
+}
+.nav-inner {
+  max-width: 900px; margin: 0 auto; padding: 0 1.5rem;
+  height: 52px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-logo {
+  font-family: var(--font-code);
+  font-size: .85rem;
+  color: var(--green);
+  text-decoration: none;
+  display: flex; align-items: center; gap: .5rem;
+}
+.nav-logo::before {
+  content: '>';
+  opacity: .5;
+  animation: blink 1.2s step-end infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+.nav-links { display: flex; gap: .25rem; }
+.nav-links a {
+  font-size: .78rem;
+  color: var(--dim);
+  text-decoration: none;
+  padding: .35rem .75rem;
+  border-radius: var(--r);
+  transition: color .2s, background .2s;
+}
+.nav-links a:hover { color: var(--green); background: var(--green-dim); }
+
+/* ── HERO ────────────────────────────────────────────────────── */
+#hero {
+  padding: 6rem 0 4rem;
+  position: relative;
+  overflow: hidden;
+}
+/* Grid background */
+#hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: .5;
+  mask-image: radial-gradient(ellipse 90% 90% at 50% 0%, black 30%, transparent 100%);
+}
+/* Glow orb */
+#hero::after {
+  content: '';
+  position: absolute;
+  top: -120px; left: 50%; transform: translateX(-50%);
+  width: 600px; height: 400px;
+  background: radial-gradient(ellipse, rgba(59,255,176,.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-inner { position: relative; z-index: 1; }
+.hero-eyebrow {
+  font-family: var(--font-code);
+  font-size: .72rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 1.25rem;
+  display: flex; align-items: center; gap: .6rem;
+}
+.hero-eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 28px; height: 1px;
+  background: var(--green);
+}
+h1 {
+  font-family: var(--font-code);
+  font-size: clamp(2.6rem, 6vw, 4.2rem);
+  font-weight: 500;
+  color: var(--bright);
+  line-height: 1.05;
+  letter-spacing: -.02em;
+  margin-bottom: 1.25rem;
+}
+h1 em {
+  font-style: normal;
+  color: var(--green);
+}
+.hero-sub {
+  font-size: 1.05rem;
+  color: var(--dim);
+  max-width: 540px;
+  margin-bottom: 2.25rem;
+  line-height: 1.7;
+}
+.hero-actions { display: flex; flex-wrap: wrap; gap: .75rem; }
+.btn {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-family: var(--font-code);
+  font-size: .8rem;
+  padding: .6rem 1.3rem;
+  border-radius: var(--r);
+  text-decoration: none;
+  transition: all .2s;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+.btn-primary {
+  background: var(--green);
+  color: #000;
+  font-weight: 500;
+}
+.btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.btn-ghost {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--muted);
+}
+.btn-ghost:hover { border-color: var(--green); color: var(--green); transform: translateY(-1px); }
+
+/* Pill badges */
+.hero-badges {
+  display: flex; flex-wrap: wrap; gap: .5rem;
+  margin-top: 2.5rem;
+}
+.badge {
+  font-family: var(--font-code);
+  font-size: .68rem;
+  padding: .25rem .7rem;
+  border-radius: 100px;
+  border: 1px solid var(--muted);
+  color: var(--dim);
+  white-space: nowrap;
+}
+
+/* ── SECTION HEADER ──────────────────────────────────────────── */
+.sec-label {
+  font-family: var(--font-code);
+  font-size: .68rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: .6rem;
+}
+.sec-title {
+  font-family: var(--font-ui);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 700;
+  color: var(--bright);
+  margin-bottom: .9rem;
+}
+.sec-desc {
+  font-size: .95rem;
+  color: var(--dim);
+  max-width: 560px;
+  line-height: 1.75;
+}
+
+/* ── OVERVIEW STATS ──────────────────────────────────────────── */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  overflow: hidden;
+  margin-top: 3rem;
+}
+.stat {
+  background: var(--bg2);
+  padding: 1.4rem 1.25rem;
+  text-align: center;
+}
+.stat-val {
+  font-family: var(--font-code);
+  font-size: 1.8rem;
+  color: var(--green);
+  line-height: 1;
+  margin-bottom: .3rem;
+}
+.stat-lbl {
+  font-size: .75rem;
+  color: var(--dim);
+  letter-spacing: .05em;
+}
+
+/* ── FEATURES GRID ───────────────────────────────────────────── */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  overflow: hidden;
+  margin-top: 3rem;
+}
+.feature {
+  background: var(--bg2);
+  padding: 1.6rem 1.4rem;
+  transition: background .2s;
+}
+.feature:hover { background: var(--bg3); }
+.feature-icon {
+  font-size: 1.3rem;
+  margin-bottom: .85rem;
+  display: block;
+}
+.feature-title {
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: .92rem;
+  color: var(--bright);
+  margin-bottom: .4rem;
+}
+.feature-desc {
+  font-size: .82rem;
+  color: var(--dim);
+  line-height: 1.6;
+}
+
+/* ── ARCHITECTURE DIAGRAM ────────────────────────────────────── */
+#architecture { background: var(--bg2); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.arch-diagram {
+  margin-top: 3rem;
+  font-family: var(--font-code);
+  font-size: .78rem;
+  line-height: 1.5;
+  overflow-x: auto;
+}
+.arch-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+.arch-layer {
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  overflow: hidden;
+}
+.arch-layer-label {
+  background: var(--bg3);
+  border-bottom: 1px solid var(--line);
+  padding: .5rem 1rem;
+  font-size: .68rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.arch-nodes {
+  display: flex; flex-wrap: wrap; gap: 0;
+}
+.arch-node {
+  flex: 1 1 140px;
+  padding: 1rem 1.25rem;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.arch-node:last-child { border-right: none; }
+.arch-node-name {
+  color: var(--bright);
+  font-weight: 500;
+  font-size: .82rem;
+  margin-bottom: .35rem;
+}
+.arch-node-file {
+  color: var(--muted);
+  font-size: .72rem;
+}
+.arch-node-desc {
+  color: var(--dim);
+  font-size: .75rem;
+  margin-top: .35rem;
+  font-family: var(--font-ui);
+  line-height: 1.5;
+}
+.arch-arrow {
+  display: flex; align-items: center; justify-content: center;
+  padding: .6rem;
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+/* ── CONTROLS TABLE ──────────────────────────────────────────── */
+.controls-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  overflow: hidden;
+  margin-top: 3rem;
+}
+.ctrl-card {
+  background: var(--bg2);
+  padding: 1.25rem 1.4rem;
+  transition: background .2s;
+  cursor: default;
+}
+.ctrl-card:hover { background: var(--bg3); }
+.ctrl-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: .5rem;
+}
+.ctrl-name {
+  font-family: var(--font-code);
+  font-size: .85rem;
+  color: var(--green);
+}
+.ctrl-type {
+  font-family: var(--font-code);
+  font-size: .65rem;
+  color: var(--muted);
+  background: var(--bg);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  border: 1px solid var(--line);
+}
+.ctrl-desc {
+  font-size: .82rem;
+  color: var(--dim);
+  line-height: 1.6;
+  margin-bottom: .65rem;
+}
+.ctrl-snippet {
+  font-family: var(--font-code);
+  font-size: .7rem;
+  color: var(--muted);
+  background: var(--bg);
+  padding: .5rem .75rem;
+  border-radius: 4px;
+  border: 1px solid var(--line);
+  white-space: pre;
+  overflow-x: auto;
+}
+
+/* ── CODE BLOCK ──────────────────────────────────────────────── */
+#quickstart { border-top: 1px solid var(--line); }
+.code-window {
+  margin-top: 2.5rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  overflow: hidden;
+}
+.code-titlebar {
+  background: var(--bg3);
+  border-bottom: 1px solid var(--line);
+  padding: .6rem 1rem;
+  display: flex; align-items: center; gap: .75rem;
+}
+.code-dots { display: flex; gap: .4rem; }
+.code-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+}
+.code-dot:nth-child(1) { background: #ff5f57; }
+.code-dot:nth-child(2) { background: #ffbd2e; }
+.code-dot:nth-child(3) { background: #28ca41; }
+.code-filename {
+  font-family: var(--font-code);
+  font-size: .72rem;
+  color: var(--dim);
+}
+pre {
+  background: var(--bg2);
+  padding: 1.5rem 1.75rem;
+  overflow-x: auto;
+  line-height: 1.7;
+}
+code {
+  font-family: var(--font-code);
+  font-size: .78rem;
+}
+/* Syntax highlight */
+.k { color: #ff7eb6; }   /* keyword */
+.t { color: var(--blue); } /* type */
+.s { color: var(--amber); } /* string */
+.c { color: var(--muted); font-style: italic; } /* comment */
+.fn { color: var(--green); } /* function */
+.n { color: var(--text); }  /* normal */
+.p { color: var(--dim); }  /* punctuation */
+
+/* ── EVENT FLOW ──────────────────────────────────────────────── */
+.flow {
+  margin-top: 3rem;
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  overflow: hidden;
+}
+.flow-step {
+  flex: 1;
+  background: var(--bg2);
+  padding: 1.4rem 1.2rem;
+  border-right: 1px solid var(--line);
+  position: relative;
+  transition: background .2s;
+}
+.flow-step:hover { background: var(--bg3); }
+.flow-step:last-child { border-right: none; }
+.flow-num {
+  font-family: var(--font-code);
+  font-size: .65rem;
+  color: var(--muted);
+  margin-bottom: .5rem;
+}
+.flow-name {
+  font-weight: 600;
+  font-size: .88rem;
+  color: var(--bright);
+  margin-bottom: .4rem;
+}
+.flow-desc {
+  font-size: .78rem;
+  color: var(--dim);
+  line-height: 1.5;
+}
+.flow-arrow {
+  position: absolute;
+  right: -10px; top: 50%; transform: translateY(-50%);
+  width: 20px; height: 20px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .65rem;
+  color: var(--green);
+  z-index: 1;
+}
+.flow-step:last-child .flow-arrow { display: none; }
+
+/* ── DEMOS ───────────────────────────────────────────────────── */
+#demos { background: var(--bg2); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.demos-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 3rem;
+}
+.demo-card {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  overflow: hidden;
+  transition: border-color .2s, transform .2s;
+}
+.demo-card:hover { border-color: var(--green); transform: translateY(-3px); }
+.demo-preview {
+  background: #000;
+  padding: 1rem 1rem .75rem;
+  font-family: var(--font-code);
+  font-size: .65rem;
+  line-height: 1.5;
+  min-height: 100px;
+  border-bottom: 1px solid var(--line);
+  overflow: hidden;
+}
+.demo-preview .g { color: #28ca41; }
+.demo-preview .b { color: var(--blue); }
+.demo-preview .w { color: #ddd; }
+.demo-preview .dim { color: #555; }
+.demo-preview .box { color: var(--muted); }
+.demo-info { padding: 1rem; }
+.demo-file {
+  font-family: var(--font-code);
+  font-size: .65rem;
+  color: var(--muted);
+  margin-bottom: .3rem;
+}
+.demo-name {
+  font-weight: 600;
+  font-size: .9rem;
+  color: var(--bright);
+  margin-bottom: .3rem;
+}
+.demo-desc {
+  font-size: .78rem;
+  color: var(--dim);
+  line-height: 1.5;
+}
+
+/* ── INSTALL ─────────────────────────────────────────────────── */
+.install-steps {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-top: 3rem;
+}
+.install-step {
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  overflow: hidden;
+}
+.install-step-head {
+  background: var(--bg3);
+  border-bottom: 1px solid var(--line);
+  padding: .65rem 1rem;
+  display: flex; align-items: center; gap: .75rem;
+}
+.install-step-num {
+  font-family: var(--font-code);
+  font-size: .68rem;
+  color: var(--green);
+  background: var(--green-dim);
+  border: 1px solid var(--green-mid);
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.install-step-title {
+  font-size: .84rem;
+  font-weight: 600;
+  color: var(--bright);
+}
+.install-step-body {
+  padding: 1rem 1.25rem;
+}
+.install-step-body p {
+  font-size: .82rem;
+  color: var(--dim);
+  line-height: 1.6;
+  margin-bottom: .65rem;
+}
+.install-cmd {
+  font-family: var(--font-code);
+  font-size: .75rem;
+  color: var(--green);
+  background: var(--bg);
+  padding: .5rem .85rem;
+  border-radius: 4px;
+  border: 1px solid var(--line);
+  display: block;
+}
+
+/* ── FOOTER ──────────────────────────────────────────────────── */
+footer {
+  border-top: 1px solid var(--line);
+  padding: 2rem 0;
+}
+.footer-inner {
+  max-width: 900px; margin: 0 auto; padding: 0 1.5rem;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 1rem;
+}
+.footer-left {
+  font-family: var(--font-code);
+  font-size: .75rem;
+  color: var(--muted);
+}
+.footer-left span { color: var(--green); }
+.footer-links { display: flex; gap: 1.25rem; }
+.footer-links a {
+  font-size: .78rem;
+  color: var(--dim);
+  text-decoration: none;
+  transition: color .2s;
+}
+.footer-links a:hover { color: var(--green); }
+
+/* ── REVEAL ANIMATIONS ───────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity .6s ease, transform .6s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-d1 { transition-delay: .1s; }
+.reveal-d2 { transition-delay: .2s; }
+.reveal-d3 { transition-delay: .3s; }
+.reveal-d4 { transition-delay: .4s; }
+.reveal-d5 { transition-delay: .5s; }
+
+/* ── RESPONSIVE ──────────────────────────────────────────────── */
+@media (max-width: 700px) {
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  .features-grid { grid-template-columns: 1fr; }
+  .controls-grid { grid-template-columns: 1fr; }
+  .demos-grid { grid-template-columns: 1fr; }
+  .install-steps { grid-template-columns: 1fr; }
+  .flow { flex-direction: column; }
+  .flow-step { border-right: none; border-bottom: 1px solid var(--line); }
+  .flow-step:last-child { border-bottom: none; }
+  .flow-arrow { display: none; }
+}
+@media (max-width: 480px) {
+  h1 { font-size: 2rem; }
+  .arch-nodes { flex-direction: column; }
+  .arch-node { border-right: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ─────────────────────────────────────────────────────── -->
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="#">WinUI3</a>
+    <div class="nav-links">
+      <a href="#overview">Overview</a>
+      <a href="#controls">Controls</a>
+      <a href="#quickstart">Quick Start</a>
+      <a href="#demos">Demos</a>
+      <a href="#install">Install</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── HERO ────────────────────────────────────────────────────── -->
+<section id="hero">
+  <div class="wrap">
+    <div class="hero-inner">
+      <p class="hero-eyebrow">C++ / Windows Console</p>
+      <h1>Console UI,<br/>done <em>properly</em>.</h1>
+      <p class="hero-sub">
+        WinUI3 is a lightweight, header-only C++ library for building
+        interactive terminal interfaces on Windows — with focus management,
+        event-driven input, and composable controls.
+        Zero dependencies beyond the Windows SDK.
+      </p>
+      <div class="hero-actions">
+        <a href="#quickstart" class="btn btn-primary">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          Get Started
+        </a>
+        <a href="https://github.com" class="btn btn-ghost" target="_blank" rel="noopener">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.21 11.39.6.11.79-.26.79-.58v-2.23c-3.34.73-4.03-1.42-4.03-1.42-.55-1.39-1.33-1.76-1.33-1.76-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.49 1 .11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23A11.5 11.5 0 0 1 12 5.8c1.02 0 2.05.14 3.01.4 2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.82 1.1.82 2.22v3.29c0 .32.19.69.8.58C20.56 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          View on GitHub
+        </a>
+        <a href="architecture.md" class="btn btn-ghost">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Docs
+        </a>
+      </div>
+      <div class="hero-badges">
+        <span class="badge">C++17</span>
+        <span class="badge">Windows 10 / 11</span>
+        <span class="badge">Header-only</span>
+        <span class="badge">MIT License</span>
+        <span class="badge">No dependencies</span>
+        <span class="badge">CMake ready</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── OVERVIEW ─────────────────────────────────────────────────── -->
+<section id="overview">
+  <div class="wrap">
+    <p class="sec-label reveal">Overview</p>
+    <h2 class="sec-title reveal reveal-d1">Everything a console app needs</h2>
+    <p class="sec-desc reveal reveal-d2">
+      A complete toolkit for building rich terminal UIs — from a single interactive button
+      to full multi-screen applications with tab navigation and modal dialogs.
+    </p>
+
+    <div class="stats-row reveal reveal-d3">
+      <div class="stat">
+        <div class="stat-val">9</div>
+        <div class="stat-lbl">UI Controls</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val">5</div>
+        <div class="stat-lbl">Core Classes</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val">5</div>
+        <div class="stat-lbl">Demo Apps</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val">0</div>
+        <div class="stat-lbl">Dependencies</div>
+      </div>
+    </div>
+
+    <div class="features-grid" style="margin-top:1.25rem;">
+      <div class="feature reveal reveal-d1">
+        <span class="feature-icon">⌨️</span>
+        <div class="feature-title">Focus Management</div>
+        <div class="feature-desc">Tab / Shift+Tab navigation between controls out of the box. Register once, navigate automatically.</div>
+      </div>
+      <div class="feature reveal reveal-d2">
+        <span class="feature-icon">🖱️</span>
+        <div class="feature-title">Mouse Support</div>
+        <div class="feature-desc">Hover detection, click handling, and visual state changes driven by the Windows console mouse API.</div>
+      </div>
+      <div class="feature reveal reveal-d3">
+        <span class="feature-icon">📡</span>
+        <div class="feature-title">Event System</div>
+        <div class="feature-desc">Type-safe handler registration for keyboard, mouse, window resize, and focus events via a background thread.</div>
+      </div>
+      <div class="feature reveal reveal-d1">
+        <span class="feature-icon">🧩</span>
+        <div class="feature-title">Composable Controls</div>
+        <div class="feature-desc">Container lays out children automatically — vertical stacks, horizontal rows, padding, spacing, alignment.</div>
+      </div>
+      <div class="feature reveal reveal-d2">
+        <span class="feature-icon">🎨</span>
+        <div class="feature-title">Visual States</div>
+        <div class="feature-desc">Each control renders distinct default, hovered, and focused appearances using Windows console color attributes.</div>
+      </div>
+      <div class="feature reveal reveal-d3">
+        <span class="feature-icon">📦</span>
+        <div class="feature-title">Header-only</div>
+        <div class="feature-desc">Drop the headers into your project and include them — no precompiled libraries, no linker flags beyond <code style="color:var(--amber)">kernel32</code>.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ARCHITECTURE ─────────────────────────────────────────────── -->
+<section id="architecture">
+  <div class="wrap">
+    <p class="sec-label reveal">Architecture</p>
+    <h2 class="sec-title reveal reveal-d1">Clean separation of concerns</h2>
+    <p class="sec-desc reveal reveal-d2">
+      Four core classes handle all infrastructure. Controls inherit from the base
+      and implement only their drawing and interaction logic.
+    </p>
+
+    <div class="arch-grid reveal reveal-d3">
+      <!-- Core layer -->
+      <div class="arch-layer">
+        <div class="arch-layer-label">Core</div>
+        <div class="arch-nodes">
+          <div class="arch-node">
+            <div class="arch-node-name">Control</div>
+            <div class="arch-node-file">Core/Control.h</div>
+            <div class="arch-node-desc">Abstract base. Holds rect, focus, hover state. Defines the draw / onMouse / onKey interface.</div>
+          </div>
+          <div class="arch-node">
+            <div class="arch-node-name">Render</div>
+            <div class="arch-node-file">Core/Render.h</div>
+            <div class="arch-node-desc">Static drawing utilities — box outlines, fill, centered and left-aligned text, screen clear.</div>
+          </div>
+          <div class="arch-node">
+            <div class="arch-node-name">FocusManager</div>
+            <div class="arch-node-file">Core/FocusManager.h</div>
+            <div class="arch-node-desc">Tracks registered controls, routes Tab/Shift+Tab, exposes getFocused() and redrawAll().</div>
+          </div>
+          <div class="arch-node">
+            <div class="arch-node-name">EventManager</div>
+            <div class="arch-node-file">Core/EventManager.h</div>
+            <div class="arch-node-desc">Singleton. Processes console input on a background thread, dispatches typed handlers.</div>
+          </div>
+          <div class="arch-node">
+            <div class="arch-node-name">InputState</div>
+            <div class="arch-node-file">Core/InputState.h</div>
+            <div class="arch-node-desc">Polls virtual key state synchronously. Used for main-loop exit conditions.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="arch-arrow">↓</div>
+
+      <!-- Controls layer -->
+      <div class="arch-layer">
+        <div class="arch-layer-label">BasicElements — inherit Control + Render</div>
+        <div class="arch-nodes">
+          <div class="arch-node">
+            <div class="arch-node-name">Button</div>
+            <div class="arch-node-file">BasicElements/Button.h</div>
+            <div class="arch-node-desc">Base button. Subclassed by CFButton (virtual action) and FIButton (lambda callback).</div>
+          </div>
+          <div class="arch-node">
+            <div class="arch-node-name">TextBox</div>
+            <div class="arch-node-file">BasicElements/TextBox.h</div>
+            <div class="arch-node-desc">Text input. Subscribes keyboard on focus, unsubscribes on blur. CFTextBox / FITextBox variants.</div>
+          </div>
+          <div class="arch-node">
+            <div class="arch-node-name">CheckBox</div>
+            <div class="arch-node-file">BasicElements/CheckBox.h</div>
+            <div class="arch-node-desc">Toggle control. <code style="color:var(--amber)">checked</code> bool flips on Space or click. Renders [ ] / [X].</div>
+          </div>
+          <div class="arch-node">
+            <div class="arch-node-name">Label</div>
+            <div class="arch-node-file">BasicElements/Label.h</div>
+            <div class="arch-node-desc">Static display. Type flags control border (bit 0) and center alignment (bit 1).</div>
+          </div>
+          <div class="arch-node">
+            <div class="arch-node-name">Container</div>
+            <div class="arch-node-file">BasicElements/Container.h</div>
+            <div class="arch-node-desc">Layout wrapper. Auto-arranges children vertically or horizontally with padding and alignment.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Event flow -->
+    <p class="sec-label reveal" style="margin-top:3rem">Event Flow</p>
+    <div class="flow reveal reveal-d1">
+      <div class="flow-step">
+        <div class="flow-num">01</div>
+        <div class="flow-name">Console Input</div>
+        <div class="flow-desc">Windows INPUT_RECORD stream from ReadConsoleInput</div>
+        <div class="flow-arrow">›</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">02</div>
+        <div class="flow-name">EventManager</div>
+        <div class="flow-desc">Background thread dispatches typed events to all registered handlers</div>
+        <div class="flow-arrow">›</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">03</div>
+        <div class="flow-name">Handlers</div>
+        <div class="flow-desc">Your callbacks — e.g. Tab → FocusManager::nextFocus()</div>
+        <div class="flow-arrow">›</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">04</div>
+        <div class="flow-name">FocusManager</div>
+        <div class="flow-desc">Updates focus state, calls setFocus(true/false) on controls</div>
+        <div class="flow-arrow">›</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">05</div>
+        <div class="flow-name">Control::draw()</div>
+        <div class="flow-desc">Control redraws itself with updated visual state</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTROLS ──────────────────────────────────────────────────── -->
+<section id="controls">
+  <div class="wrap">
+    <p class="sec-label reveal">Controls</p>
+    <h2 class="sec-title reveal reveal-d1">Nine ready-to-use elements</h2>
+    <p class="sec-desc reveal reveal-d2">
+      Each control comes in a Classic (CF) variant with virtual method override,
+      and a Functional (FI) variant with <code style="color:var(--amber)">std::function</code> callback.
+    </p>
+
+    <div class="controls-grid reveal reveal-d3">
+      <div class="ctrl-card">
+        <div class="ctrl-head">
+          <span class="ctrl-name">FIButton</span>
+          <span class="ctrl-type">interactive</span>
+        </div>
+        <p class="ctrl-desc">Click button with lambda callback. Visual states for default, hover (blue), and focused (green).</p>
+        <pre class="ctrl-snippet"><span class="k">auto</span> btn = <span class="fn">make_shared</span>&lt;<span class="t">FIButton</span>&gt;(
+  rect, <span class="s">L"Login"</span>, [<span class="k">this</span>]() { validate(); });</pre>
+      </div>
+      <div class="ctrl-card">
+        <div class="ctrl-head">
+          <span class="ctrl-name">FITextBox</span>
+          <span class="ctrl-type">input</span>
+        </div>
+        <p class="ctrl-desc">Text input with Enter callback. Subscribes keyboard events automatically on focus gain.</p>
+        <pre class="ctrl-snippet"><span class="k">auto</span> tb = <span class="fn">make_shared</span>&lt;<span class="t">FITextBox</span>&gt;(
+  rect, <span class="s">L"Username"</span>, [](wstring v) {});</pre>
+      </div>
+      <div class="ctrl-card">
+        <div class="ctrl-head">
+          <span class="ctrl-name">CheckBox</span>
+          <span class="ctrl-type">toggle</span>
+        </div>
+        <p class="ctrl-desc">Toggle control. Reads <code style="font-size:.72rem">checked</code> bool after form submit. Renders [ ] or [X] with label.</p>
+        <pre class="ctrl-snippet"><span class="k">if</span> (rememberMe-&gt;checked) {
+  <span class="fn">savePrefs</span>(login-&gt;text);
+}</pre>
+      </div>
+      <div class="ctrl-card">
+        <div class="ctrl-head">
+          <span class="ctrl-name">Label</span>
+          <span class="ctrl-type">display</span>
+        </div>
+        <p class="ctrl-desc">Static text display. Type flag bits control border (0x01) and center alignment (0x02). Supports live text updates.</p>
+        <pre class="ctrl-snippet"><span class="k">auto</span> lbl = <span class="fn">make_shared</span>&lt;<span class="t">Label</span>&gt;(rect, <span class="s">L"Title"</span>, <span class="n">3</span>);
+lbl-&gt;text = <span class="s">L"Updated"</span>; lbl-&gt;<span class="fn">updateText</span>();</pre>
+      </div>
+      <div class="ctrl-card">
+        <div class="ctrl-head">
+          <span class="ctrl-name">Container</span>
+          <span class="ctrl-type">layout</span>
+        </div>
+        <p class="ctrl-desc">Auto-arranges child controls vertically or horizontally. Supports padding, spacing, and Start / Center / End alignment.</p>
+        <pre class="ctrl-snippet">root.<span class="fn">addControl</span>(row);
+root.<span class="fn">rearrangeControls</span>();
+root.<span class="fn">draw</span>();</pre>
+      </div>
+      <div class="ctrl-card">
+        <div class="ctrl-head">
+          <span class="ctrl-name">CFButton / CFTextBox</span>
+          <span class="ctrl-type">classic</span>
+        </div>
+        <p class="ctrl-desc">Virtual method variants. Override <code style="font-size:.72rem">action()</code> or <code style="font-size:.72rem">onEnter()</code> in a subclass for object-oriented design patterns.</p>
+        <pre class="ctrl-snippet"><span class="k">void</span> <span class="t">CFButton</span>::<span class="fn">action</span>() {
+  <span class="fn">MessageBoxW</span>(<span class="n">NULL</span>, <span class="s">L"Clicked!"</span>, ...);
+}</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── QUICK START ───────────────────────────────────────────────── -->
+<section id="quickstart">
+  <div class="wrap">
+    <p class="sec-label reveal">Quick Start</p>
+    <h2 class="sec-title reveal reveal-d1">Up and running in minutes</h2>
+    <p class="sec-desc reveal reveal-d2">
+      A complete login form — two text inputs, a checkbox, and a submit button
+      with validation — in under 50 lines.
+    </p>
+
+    <div class="code-window reveal reveal-d3">
+      <div class="code-titlebar">
+        <div class="code-dots">
+          <div class="code-dot"></div>
+          <div class="code-dot"></div>
+          <div class="code-dot"></div>
+        </div>
+        <span class="code-filename">demo1.cpp — Login Form</span>
+      </div>
+      <pre><code><span class="c">// Include headers — add Core/ and BasicElements/ to include path</span>
+<span class="k">#include</span> <span class="s">"EventManager.h"</span>
+<span class="k">#include</span> <span class="s">"FocusManager.h"</span>
+<span class="k">#include</span> <span class="s">"../BasicElements/FiButton.h"</span>
+<span class="k">#include</span> <span class="s">"../BasicElements/TextBox.h"</span>
+<span class="k">#include</span> <span class="s">"../BasicElements/CheckBox.h"</span>
+
+<span class="k">int</span> <span class="fn">main</span>() {
+  <span class="c">// 1. Create controls with SMALL_RECT{left, top, right, bottom}</span>
+  <span class="k">auto</span> login    = <span class="fn">make_shared</span>&lt;<span class="t">TextBox</span>&gt;(<span class="t">SMALL_RECT</span>{<span class="n">10,4,50,6</span>},  <span class="s">L"Login"</span>);
+  <span class="k">auto</span> password = <span class="fn">make_shared</span>&lt;<span class="t">TextBox</span>&gt;(<span class="t">SMALL_RECT</span>{<span class="n">10,8,50,10</span>}, <span class="s">L"Password"</span>);
+  <span class="k">auto</span> remember = <span class="fn">make_shared</span>&lt;<span class="t">CheckBox</span>&gt;(<span class="t">SMALL_RECT</span>{<span class="n">10,12,50,14</span>},<span class="s">L"Remember Me"</span>);
+  <span class="k">auto</span> submit   = <span class="fn">make_shared</span>&lt;<span class="t">FIButton</span>&gt;(<span class="t">SMALL_RECT</span>{<span class="n">20,16,40,18</span>},<span class="s">L"Login"</span>);
+
+  <span class="c">// 2. Attach callback</span>
+  submit-&gt;onClick = [&amp;]() {
+    <span class="k">if</span> (login-&gt;text == <span class="s">L"admin"</span> &amp;&amp; password-&gt;text == <span class="s">L"1234"</span>)
+      <span class="fn">MessageBoxW</span>(<span class="n">NULL</span>, <span class="s">L"Welcome!"</span>, <span class="s">L"Success"</span>, <span class="n">MB_OK</span>);
+    <span class="k">else</span>
+      <span class="fn">MessageBoxW</span>(<span class="n">NULL</span>, <span class="s">L"Invalid credentials"</span>, <span class="s">L"Error"</span>, <span class="n">MB_ICONERROR</span>);
+  };
+
+  <span class="c">// 3. Register &amp; draw</span>
+  <span class="t">FocusManager</span>::<span class="fn">registerControl</span>(login);
+  <span class="t">FocusManager</span>::<span class="fn">registerControl</span>(password);
+  <span class="t">FocusManager</span>::<span class="fn">registerControl</span>(remember);
+  <span class="t">FocusManager</span>::<span class="fn">registerControl</span>(submit);
+  <span class="t">FocusManager</span>::<span class="fn">nextFocus</span>();
+  <span class="t">FocusManager</span>::<span class="fn">redrawAll</span>();
+
+  <span class="c">// 4. Enable mouse + keyboard input</span>
+  <span class="t">HANDLE</span> hin = <span class="fn">GetStdHandle</span>(<span class="n">STD_INPUT_HANDLE</span>);
+  <span class="t">DWORD</span> mode; <span class="fn">GetConsoleMode</span>(hin, &amp;mode);
+  <span class="fn">SetConsoleMode</span>(hin, <span class="n">ENABLE_EXTENDED_FLAGS</span> | <span class="n">ENABLE_WINDOW_INPUT</span> | <span class="n">ENABLE_MOUSE_INPUT</span>);
+
+  <span class="c">// 5. Wire events &amp; start</span>
+  <span class="k">auto</span>&amp; em = <span class="t">EventManager</span>::<span class="fn">getInstance</span>();
+  em.<span class="fn">addHandler</span>&lt;<span class="t">KEY_EVENT_RECORD</span>&gt;([](const <span class="t">KEY_EVENT_RECORD</span>&amp; ker) {
+    <span class="k">if</span> (ker.bKeyDown &amp;&amp; ker.wVirtualKeyCode == <span class="n">VK_TAB</span>)
+      <span class="t">FocusManager</span>::<span class="fn">nextFocus</span>();
+    <span class="k">if</span> (ker.bKeyDown &amp;&amp; ker.wVirtualKeyCode == <span class="n">VK_SPACE</span>)
+      <span class="t">FocusManager</span>::<span class="fn">getFocused</span>()-&gt;<span class="fn">action</span>();
+  });
+  em.<span class="fn">start</span>();
+
+  <span class="c">// 6. Main loop — exit on ESC</span>
+  <span class="k">while</span> (!<span class="t">InputState</span>::<span class="fn">isKeyPressed</span>(<span class="n">VK_ESCAPE</span>))
+    <span class="t">this_thread</span>::<span class="fn">sleep_for</span>(<span class="fn">milliseconds</span>(<span class="n">100</span>));
+
+  em.<span class="fn">stop</span>(); <span class="fn">SetConsoleMode</span>(hin, mode);
+}</code></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ── DEMOS ─────────────────────────────────────────────────────── -->
+<section id="demos">
+  <div class="wrap">
+    <p class="sec-label reveal">Demos</p>
+    <h2 class="sec-title reveal reveal-d1">Five example applications</h2>
+    <p class="sec-desc reveal reveal-d2">
+      Each demo is a standalone <code style="color:var(--amber)">.cpp</code> file in <code style="color:var(--amber)">src/</code> —
+      build and run to see the library in action.
+    </p>
+
+    <div class="demos-grid">
+      <div class="demo-card reveal reveal-d1">
+        <div class="demo-preview">
+<span class="box">┌────────────────────┐</span>
+<span class="box">│</span> <span class="g">[ Click Me        ]</span> <span class="box">│</span>
+<span class="box">└────────────────────┘</span>
+<span class="box">┌────────────────────┐</span>
+<span class="box">│</span> <span class="w">password_         </span> <span class="box">│</span>
+<span class="box">└────────────────────┘</span>
+<span class="box">[ ]</span> <span class="w">Remember Me</span>
+        </div>
+        <div class="demo-info">
+          <div class="demo-file">src/demo.cpp</div>
+          <div class="demo-name">Basic Controls</div>
+          <div class="demo-desc">CFButton, CFTextBox, CheckBox. Tab navigation and Space to activate.</div>
+        </div>
+      </div>
+
+      <div class="demo-card reveal reveal-d2">
+        <div class="demo-preview">
+<span class="box">┌──────────────────────┐</span>
+<span class="box">│</span> <span class="dim">Login</span>                <span class="box">│</span>
+<span class="box">│</span> <span class="w">admin_               </span><span class="box">│</span>
+<span class="box">│</span> <span class="dim">Password</span>             <span class="box">│</span>
+<span class="box">│</span> <span class="w">••••_                </span><span class="box">│</span>
+<span class="box">│</span> <span class="box">[X]</span> <span class="w">Remember Me     </span><span class="box">│</span>
+<span class="box">│</span>    <span class="g">[ Login ]</span>          <span class="box">│</span>
+<span class="box">└──────────────────────┘</span>
+        </div>
+        <div class="demo-info">
+          <div class="demo-file">src/demo1.cpp</div>
+          <div class="demo-name">Login Form</div>
+          <div class="demo-desc">Full form with validation. FIButton callback checks credentials.</div>
+        </div>
+      </div>
+
+      <div class="demo-card reveal reveal-d3">
+        <div class="demo-preview">
+<span class="box">┌──────────────────┐</span>
+<span class="box">│</span> <span class="w">  42 + 7 =        </span><span class="box">│</span>
+<span class="box">├────┬────┬────┬───┤</span>
+<span class="box">│</span> <span class="w"> 7 </span><span class="box">│</span> <span class="w"> 8 </span><span class="box">│</span> <span class="w"> 9 </span><span class="box">│</span> <span class="b"> / </span><span class="box">│</span>
+<span class="box">│</span> <span class="w"> 4 </span><span class="box">│</span> <span class="g"> 5 </span><span class="box">│</span> <span class="w"> 6 </span><span class="box">│</span> <span class="b"> * </span><span class="box">│</span>
+<span class="box">│</span> <span class="w"> 1 </span><span class="box">│</span> <span class="w"> 2 </span><span class="box">│</span> <span class="w"> 3 </span><span class="box">│</span> <span class="b"> - </span><span class="box">│</span>
+<span class="box">└────┴────┴────┴───┘</span>
+        </div>
+        <div class="demo-info">
+          <div class="demo-file">src/demo2.cpp</div>
+          <div class="demo-name">Calculator</div>
+          <div class="demo-desc">Arrow key focus movement across a 4×4 button grid. Numpad and keyboard input.</div>
+        </div>
+      </div>
+
+      <div class="demo-card reveal reveal-d4">
+        <div class="demo-preview">
+<span class="box">📁</span> <span class="b">C:\Users\dev\projects</span>
+<span class="box">├─</span> <span class="b">📁 src</span>
+<span class="box">├─</span> <span class="b">📁 include</span>
+<span class="box">├─</span> <span class="w">📄 README.md</span>
+<span class="box">├─</span> <span class="g">📄 main.cpp   ◀</span>
+<span class="box">├─</span> <span class="w">📄 CMakeLists.txt</span>
+<span class="dim">  [F9] prev  [F10] next</span>
+        </div>
+        <div class="demo-info">
+          <div class="demo-file">src/demo3.cpp</div>
+          <div class="demo-name">File Explorer</div>
+          <div class="demo-desc">Custom FileButton control. Click to open files, enter folders, paginate large directories.</div>
+        </div>
+      </div>
+
+      <div class="demo-card reveal reveal-d5">
+        <div class="demo-preview">
+<span class="box">┌───────────────────────┐</span>
+<span class="box">│</span>  <span class="g">[A] [B] [C] [D] [E]</span>  <span class="box">│</span>
+<span class="box">│</span>  <span class="w">[F] [G] [H] [I] [J]</span>  <span class="box">│</span>
+<span class="box">│</span>  <span class="w">[K] [L] [M] [N] [O]</span>  <span class="box">│</span>
+<span class="box">│</span>  <span class="w">[P] [Q] [R] [S] [T]</span>  <span class="box">│</span>
+<span class="box">│</span>  <span class="w">[U] [V] [W] [X] [Y]</span>  <span class="box">│</span>
+<span class="box">└───────────────────────┘</span>
+        </div>
+        <div class="demo-info">
+          <div class="demo-file">src/demo4.cpp</div>
+          <div class="demo-name">Container Layout</div>
+          <div class="demo-desc">Nested vertical + horizontal Containers. Center alignment, custom CharacterElement.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── INSTALL ───────────────────────────────────────────────────── -->
+<section id="install">
+  <div class="wrap">
+    <p class="sec-label reveal">Install</p>
+    <h2 class="sec-title reveal reveal-d1">Three ways to add WinUI3</h2>
+    <p class="sec-desc reveal reveal-d2">
+      No package manager required. Copy headers, point your compiler at them,
+      and you're done.
+    </p>
+
+    <div class="install-steps reveal reveal-d3">
+      <div class="install-step">
+        <div class="install-step-head">
+          <div class="install-step-num">1</div>
+          <div class="install-step-title">Clone the repository</div>
+        </div>
+        <div class="install-step-body">
+          <p>Clone or download the repo and copy the <code style="color:var(--amber)">Core/</code> and <code style="color:var(--amber)">BasicElements/</code> folders into your project.</p>
+          <code class="install-cmd">git clone https://github.com/you/winui3</code>
+        </div>
+      </div>
+
+      <div class="install-step">
+        <div class="install-step-head">
+          <div class="install-step-num">2</div>
+          <div class="install-step-title">Add include paths</div>
+        </div>
+        <div class="install-step-body">
+          <p>Tell your compiler where to find the headers. CMake example:</p>
+          <code class="install-cmd">include_directories(Core BasicElements)</code>
+        </div>
+      </div>
+
+      <div class="install-step">
+        <div class="install-step-head">
+          <div class="install-step-num">3</div>
+          <div class="install-step-title">CMake build</div>
+        </div>
+        <div class="install-step-body">
+          <p>Configure and build with CMake (Visual Studio or Ninja):</p>
+          <code class="install-cmd">cmake .. -G "Visual Studio 17 2022"</code>
+        </div>
+      </div>
+
+      <div class="install-step">
+        <div class="install-step-head">
+          <div class="install-step-num">4</div>
+          <div class="install-step-title">Or compile directly</div>
+        </div>
+        <div class="install-step-body">
+          <p>Single-file compile with MSVC — no linker flags beyond the default Windows libs.</p>
+          <code class="install-cmd">cl /EHsc /W4 /std:c++17 main.cpp</code>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ────────────────────────────────────────────────────── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-left">
+      <span>WinUI3</span> — Console UI Library · MIT License
+    </div>
+    <div class="footer-links">
+      <a href="getting-started.md">Getting Started</a>
+      <a href="architecture.md">Architecture</a>
+      <a href="basic-elements.md">Controls Ref</a>
+      <a href="examples.md">Examples</a>
+      <a href="https://github.com" target="_blank" rel="noopener">GitHub ↗</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Scroll reveal
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
