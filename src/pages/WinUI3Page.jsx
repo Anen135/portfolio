@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
 import "./WinUI3Page.css";
 import { winui3PageConfig as cfg } from "./winui3PageConfig.js";
+import Navbar from "../components/Navbar.jsx";
+import { useTheme } from "../hooks/useTheme.js";
 import {
   Keyboard,
   MousePointer2,
@@ -24,6 +26,13 @@ const FONT_GSTATIC_PRECONNECT_ID = "winui3-fonts-preconnect-gstatic";
 const FONT_STYLESHEET_ID = "winui3-fonts-stylesheet";
 
 export default function WinUI3Page() {
+  const { theme, toggle } = useTheme();
+
+  /* Sync data-theme whenever the user toggles */
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
+
   useEffect(() => {
     document.title = "WinUI3 — Console UI Library";
     document.body.classList.add("winui3-body");
@@ -74,21 +83,9 @@ export default function WinUI3Page() {
   }, []);
 
   return (
-    <div className="winui3-page">
-      <nav>
-        <div className="nav-inner">
-          <a className="nav-logo" href={cfg.nav.logoHref}>
-            {cfg.nav.logoText}
-          </a>
-          <div className="nav-links">
-            {cfg.nav.links.map((l) => (
-              <a key={l.href} href={l.href}>
-                {l.label}
-              </a>
-            ))}
-          </div>
-        </div>
-      </nav>
+    <>
+      <Navbar theme={theme} onThemeToggle={toggle} />
+      <div className="winui3-page">
 
       <section id="hero">
         <div className="wrap">
@@ -356,5 +353,6 @@ export default function WinUI3Page() {
         </div>
       </footer>
     </div>
+    </>
   );
 }
