@@ -69,7 +69,7 @@ export const config = {
         "A high-performance, windows orientated UI library built with C++. Focuses on native performance and modern design principles for cli apps.",
       tags: ["C++", "Windows", "Library", "CLI"],
       github: "https://github.com/Anen135/winui3",
-      demo: "/pages/winui3-demo.html",
+      demo: "/#/winui3",
       featured: true,
     },
     {
