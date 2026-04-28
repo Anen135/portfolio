@@ -70,6 +70,7 @@
 /* Match html { scroll-behavior: smooth; } from the standalone page */
 .winui3-html {
   scroll-behavior: smooth;
+  margin: 72.2;
 }
 
 /* ── Layout helpers ──────────────────────────────────────────── */
@@ -164,6 +165,7 @@
   gap: 0.5rem;
   font-family: var(--font-code);
   font-size: 0.8rem;
+  letter-spacing: unset;
   font-weight: unset;
   padding: 0.6rem 1.3rem;
   border-radius: var(--r);
@@ -185,6 +187,7 @@
   background: transparent;
   color: var(--text);
   border-color: var(--muted);
+
 }
 .winui3-page .btn-ghost:hover {
   border-color: var(--green);
