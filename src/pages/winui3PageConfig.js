@@ -21,7 +21,7 @@ export const winui3PageConfig = {
     ].join(" "),
     actions: [
       { type: "primary", href: "#quickstart", label: "Get Started" },
-      { type: "ghost", href: "https://github.com", label: "View on GitHub", external: true },
+      { type: "ghost", href: "https://github.com/Anen135/winui3/", label: "View on GitHub", external: true },
       { type: "ghost", href: "architecture.md", label: "Docs" },
     ],
     badges: ["C++17", "Windows 10 / 11", "Header-only", "MIT License", "No dependencies", "CMake ready"],
@@ -416,11 +416,11 @@ export const winui3PageConfig = {
   footer: {
     leftHtml: '<span>WinUI3</span> — Console UI Library · MIT License',
     links: [
-      { href: "getting-started.md", label: "Getting Started" },
-      { href: "architecture.md", label: "Architecture" },
-      { href: "basic-elements.md", label: "Controls Ref" },
-      { href: "examples.md", label: "Examples" },
-      { href: "https://github.com", label: "GitHub ↗", external: true },
+      { href: "#quickstart", label: "Getting Started" },
+      { href: "#architecture", label: "Architecture" },
+      { href: "#controls", label: "Controls Ref" },
+      { href: "#demos", label: "Examples" },
+      { href: "https://github.com/Anen135/winui3/", label: "GitHub ↗", external: true },
     ],
   },
 };

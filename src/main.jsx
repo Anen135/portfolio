@@ -4,18 +4,16 @@ import App from "./App.jsx";
 import WinUI3Page from "./pages/WinUI3Page.jsx";
 import "./styles/global.css";
 
-/** Returns true when the current URL points at the WinUI3 page. */
 function getIsWinUI3() {
   const hash = window.location.hash.toLowerCase();
   const path = window.location.pathname.toLowerCase();
-  return (
-    hash === "#/winui3" ||
-    hash === "#/winui3/" ||
-    hash === "#winui3"  ||
-    hash === "#winui3/" ||
-    path === "/winui3"  ||
-    path === "/winui3/"
-  );
+
+  const winui3Hashes = [
+    "#/winui3", "#/winui3/", "#winui3", "#winui3/",
+    "#overview", "#architecture", "#controls", "#quickstart", "#demos", "#install"
+  ];
+
+  return winui3Hashes.includes(hash) || path === "/winui3" || path === "/winui3/";
 }
 
 /** Root component — switches between pages based on hash. */

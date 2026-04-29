@@ -40,7 +40,11 @@ const PAGE_LINKS = [
 /** Returns true when the current hash points at the WinUI3 page. */
 function hashIsWinUI3() {
   const h = window.location.hash.toLowerCase();
-  return h === "#/winui3" || h === "#/winui3/" || h === "#winui3" || h === "#winui3/";
+  const winui3Hashes = [
+    "#/winui3", "#/winui3/", "#winui3", "#winui3/",
+    "#overview", "#architecture", "#controls", "#quickstart", "#demos", "#install"
+  ];
+  return winui3Hashes.includes(h) || window.location.pathname.toLowerCase().includes("/winui3");
 }
 
 /**
