@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { config } from "../config.js";
 import { useScrollReveal } from "../hooks/useScrollReveal.js";
-import "./Skills.css";
+import "@/styles/Skills.css";
 
 /* Group skills by category */
 function groupBy(arr, key) {

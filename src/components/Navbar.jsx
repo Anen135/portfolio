@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { config } from "../config.js";
-import "./Navbar.css";
+import "@/styles/Navbar.css";
 
 /* ── SVG Icons ──────────────────────────────────────────────── */
 const SunIcon = () => (
@@ -31,90 +31,98 @@ const CloseIcon = () => (
   </svg>
 );
 
-/** Page-level navigation entries. href uses hash routing. */
+/* ── Navigation ─────────────────────────────────────────────── */
+
 const PAGE_LINKS = [
-  { label: "Portfolio", href: "#/" },
-  { label: "WinUI3",   href: "#/winui3" },
+  { label: "Portfolio", href: "/portfolio/" },
+  { label: "WinUI3", href: "/portfolio/winui3" },
 ];
 
-/** Returns true when the current hash points at the WinUI3 page. */
-function hashIsWinUI3() {
-  const h = window.location.hash.toLowerCase();
-  const winui3Hashes = [
-    "#/winui3", "#/winui3/", "#winui3", "#winui3/",
-    "#overview", "#architecture", "#controls", "#quickstart", "#demos", "#install"
-  ];
-  return winui3Hashes.includes(h) || window.location.pathname.toLowerCase().includes("/winui3");
+function getCurrentPath() {
+  return window.location.pathname.toLowerCase();
 }
 
-/**
- * Single shared navigation bar for all pages.
- *
- * Props:
- *   theme         – "dark" | "light"
- *   onThemeToggle – () => void
- */
 export default function Navbar({ theme, onThemeToggle }) {
-  const [scrolled,  setScrolled]  = useState(false);
-  const [menuOpen,  setMenuOpen]  = useState(false);
-  const [activePage, setActivePage] = useState(hashIsWinUI3() ? "#/winui3" : "#/");
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [activePage, setActivePage] = useState(getCurrentPath());
 
-  /* Track scroll for blur background */
+  /* Scroll blur */
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 40);
+    };
+
     window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+    };
   }, []);
 
-  /* Keep active page indicator in sync with hash changes */
+  /* Track URL changes */
   useEffect(() => {
-    const onHash = () => setActivePage(hashIsWinUI3() ? "#/winui3" : "#/");
-    window.addEventListener("hashchange", onHash);
-    return () => window.removeEventListener("hashchange", onHash);
+    const onLocationChange = () => {
+      setActivePage(getCurrentPath());
+    };
+
+    window.addEventListener("popstate", onLocationChange);
+
+    return () => {
+      window.removeEventListener("popstate", onLocationChange);
+    };
   }, []);
 
-  const handlePageLink = (e, href) => {
+  /* Navigation */
+  const navigate = (e, href) => {
     e.preventDefault();
+
+    window.history.pushState({}, "", href);
+
+    setActivePage(href);
     setMenuOpen(false);
-    // Navigate by setting the hash — the hashchange listener in main.jsx
-    // will swap the rendered page component.
-    window.location.hash = href.replace(/^#/, "");
+
+    window.dispatchEvent(new PopStateEvent("popstate"));
   };
 
   return (
     <nav className={`navbar ${scrolled ? "navbar--scrolled" : ""}`}>
       <div className="navbar__inner">
 
-        {/* Logo — always navigates to portfolio home */}
+        {/* Logo */}
         <a
           id="nav-logo"
           href="#/"
           className="navbar__logo"
-          onClick={(e) => handlePageLink(e, "#/")}
+          onClick={(e) => navigate(e, "/portfolio/")}
         >
           <span className="navbar__logo-bracket">&lt;</span>
           {config.name.split(" ")[0] || "Dev"}
           <span className="navbar__logo-bracket">/&gt;</span>
         </a>
 
-        {/* Desktop page links */}
+        {/* Desktop Links */}
         <ul className="navbar__links" role="list">
-          {PAGE_LINKS.map((link) => (
-            <li key={link.href}>
-              <a
-                id={`nav-link-${link.label.toLowerCase()}`}
-                href={link.href}
-                className={`navbar__page-link ${activePage === link.href ? "navbar__page-link--active" : ""}`}
-                onClick={(e) => handlePageLink(e, link.href)}
-                aria-current={activePage === link.href ? "page" : undefined}
-              >
-                {link.label}
-              </a>
-            </li>
-          ))}
+          {PAGE_LINKS.map((link) => {
+            const isActive = activePage == link.href || activePage.startsWith(link.href + "/");
+
+            return (
+              <li key={link.href}>
+                <a
+                  href={link.href}
+                  className={`navbar__page-link ${
+                    isActive ? "navbar__page-link--active" : ""
+                  }`}
+                  onClick={(e) => navigate(e, link.href)}
+                >
+                  {link.label}
+                </a>
+              </li>
+            );
+          })}
         </ul>
 
-        {/* Right controls */}
+        {/* Controls */}
         <div className="navbar__controls">
           <button
             id="nav-theme-toggle"

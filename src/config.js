@@ -15,8 +15,9 @@ export const config = {
   // ── Contact ────────────────────────────────
   email: "whoyou1994j4920@gmail.com",
   github: "https://github.com/Anen135",
-  linkedin: "https://linkedin.com/in/yourusername",
+  linkedin: "https://www.linkedin.com/in/anen-barno-7351793bb/",
   telegram: "https://t.me/deadmaidenILS",
+  leetcode: "https://leetcode.com/u/Anen135",
   cvUrl: "/cv.pdf",
 
   // ── About Me ───────────────────────────────

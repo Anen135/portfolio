@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { config } from "../config.js";
-import "./Hero.css";
+import "@/styles/Hero.css";
 
 /* ── Typing effect for the title ── */
 function useTypingEffect(text, speed = 55) {

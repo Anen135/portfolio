@@ -1,34 +1,46 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import WinUI3Page from "./pages/WinUI3Page.jsx";
+import ProjectTemplate from "./pages/ProjectTemplate.jsx";
 import "./styles/global.css";
 
-function getIsWinUI3() {
-  const hash = window.location.hash.toLowerCase();
-  const path = window.location.pathname.toLowerCase();
-
-  const winui3Hashes = [
-    "#/winui3", "#/winui3/", "#winui3", "#winui3/",
-    "#overview", "#architecture", "#controls", "#quickstart", "#demos", "#install"
-  ];
-
-  return winui3Hashes.includes(hash) || path === "/winui3" || path === "/winui3/";
+function getPath() {
+  return window.location.pathname.toLowerCase();
 }
 
-/** Root component — switches between pages based on hash. */
-function Root() {
-  const [isWinUI3, setIsWinUI3] = useState(getIsWinUI3);
+function isWinUI3Page(path) {
+  return path === "/portfolio/winui3" || path === "/portfolio/winui3/";
+}
 
-  // Re-render on every hash change so clicking navbar links actually
-  // swaps the page without a full browser reload.
-  React.useEffect(() => {
-    const onHashChange = () => setIsWinUI3(getIsWinUI3());
-    window.addEventListener("hashchange", onHashChange);
-    return () => window.removeEventListener("hashchange", onHashChange);
+function isProjectPage(path) {
+  return path.startsWith("/portfolio/projects/");
+}
+
+function Root() {
+  const [path, setPath] = useState(getPath());
+
+  useEffect(() => {
+    const onLocationChange = () => {
+      setPath(getPath());
+    };
+
+    window.addEventListener("popstate", onLocationChange);
+
+    return () => {
+      window.removeEventListener("popstate", onLocationChange);
+    };
   }, []);
 
-  return isWinUI3 ? <WinUI3Page /> : <App />;
+  if (isWinUI3Page(path)) {
+    return <WinUI3Page />;
+  }
+
+  if (isProjectPage(path)) {
+    return <ProjectTemplate />;
+  }
+
+  return <App />;
 }
 
 ReactDOM.createRoot(document.getElementById("root")).render(

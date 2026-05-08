@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import "./WinUI3Page.css";
+import "@/styles/WinUI3Page.css";
 import { winui3PageConfig as cfg } from "./winui3PageConfig.js";
 import Navbar from "../components/Navbar.jsx";
 import { useTheme } from "../hooks/useTheme.js";

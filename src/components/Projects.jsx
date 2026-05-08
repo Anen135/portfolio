@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { config } from "../config.js";
 import { useScrollReveal } from "../hooks/useScrollReveal.js";
-import "./Projects.css";
+import "@/styles/Projects.css";
 
 const GithubIcon = () => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
