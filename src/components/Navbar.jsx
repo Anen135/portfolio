@@ -35,6 +35,7 @@ const CloseIcon = () => (
 
 const PAGE_LINKS = [
   { label: "Portfolio", href: "/portfolio/" },
+  { label: "Templates", href: "/portfolio/templates" },
   { label: "WinUI3", href: "/portfolio/winui3" },
 ];
 
@@ -154,7 +155,7 @@ export default function Navbar({ theme, onThemeToggle }) {
             key={link.href}
             href={link.href}
             className={`navbar__mobile-link ${activePage === link.href ? "navbar__mobile-link--active" : ""}`}
-            onClick={(e) => handlePageLink(e, link.href)}
+            onClick={(e) => navigate(e, link.href)}
             aria-current={activePage === link.href ? "page" : undefined}
           >
             {link.label}

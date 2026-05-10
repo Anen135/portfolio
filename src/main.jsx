@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import WinUI3Page from "./pages/WinUI3Page.jsx";
 import ProjectTemplate from "./pages/ProjectTemplate.jsx";
+import TemplateSelectionPage from "./pages/TemplateSelectionPage.jsx";
 import "./styles/global.css";
 
 function getPath() {
@@ -15,6 +16,10 @@ function isWinUI3Page(path) {
 
 function isProjectPage(path) {
   return path.startsWith("/portfolio/projects/");
+}
+
+function isTemplatePage(path) {
+  return path === "/portfolio/templates" || path === "/portfolio/templates/";
 }
 
 function Root() {
@@ -38,6 +43,10 @@ function Root() {
 
   if (isProjectPage(path)) {
     return <ProjectTemplate />;
+  }
+
+  if (isTemplatePage(path)) {
+    return <TemplateSelectionPage />;
   }
 
   return <App />;
