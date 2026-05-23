@@ -1,16 +1,56 @@
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { LayoutTemplate, Layers, ArrowRight } from 'lucide-react';
+import { LayoutTemplate, Layers, ArrowRight, Download, Terminal, Keyboard, Gamepad2} from 'lucide-react';
 import SimpleNavbar from '../components/SimpleNavbar.jsx';
-
 const templates = [
   {
-    id: 'universal',
-    title: 'Universal Project Template',
-    description: 'A versatile, dynamic component that fetches project data from a centralized registry and automatically renders beautiful documentation sections.',
-    icon: Layers,
-    href: '/portfolio/projects/project-1',
-    tags: ['Data-Driven', 'React', 'Dynamic']
+    id: 'wtf-ui',
+    title: 'WTF UI Library',
+    description:
+      'Lightweight header-only framework for creating native interfaces in a Windows terminal with direct access to WinAPI and native code performance.',
+    icon: Terminal,
+    href: '/portfolio/projects/wtf-ui',
+    tags: ['C++20', 'WinAPI', 'Header-Only', 'TUI', 'Terminal']
+  },
+  {
+    id: 'pinterest-video-downloader',
+    title: 'Pinterest Video Downloader',
+    description:
+      'Chrome extension for downloading videos and images from Pinterest with selectable resolutions and a clean popup UI.',
+    icon: Download,
+    href: '/portfolio/projects/pinterest-video-downloader',
+    tags: ['Chrome Extension', 'Manifest V3', 'JavaScript', 'Pinterest']
+  },
+  {
+    id: 'link-navigation',
+    title: 'Link Navigation',
+    description:
+      'Chrome extension that adds Vim-style keyboard navigation for links and buttons using interactive hint labels.',
+    icon: Keyboard,
+    href: '/portfolio/projects/link-navigation',
+    tags: ['Chrome Extension', 'Manifest V3', 'JavaScript', 'Vim', 'Accessibility']
+  },
+  {
+    id: 'console-pingpong-cpp',
+    title: 'Console Ping Pong',
+    description: 'Console implementation of Pong in C++ with AI bots, WinAPI rendering, and modular controller architecture.',
+    icon: Gamepad2,
+    href: '/portfolio/projects/console-pingpong-cpp',
+    tags: [ 'C++', 'WinAPI', 'Console', 'GameDev', 'AI', 'Terminal', 'Pong' ]
+  },
+  {
+    id: 'terminal-snake-ai',
+
+    title: 'Terminal Snake AI',
+
+    description:
+      'Кроссплатформенная Snake на C++ с ANSI-рендерингом, поддержкой WinAPI/POSIX и встроенным AI-автопилотом.',
+
+    icon: Terminal,
+
+    href: '/portfolio/projects/terminal-snake-ai',
+
+    tags: [ 'C++', 'Console', 'GameDev', 'AI', 'CrossPlatform' ]
   }
 ];
 
@@ -49,7 +89,7 @@ export default function TemplateSelectionPage() {
             >
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
                 <div style={{
-                  padding: '1rem',
+                  padding: '0.5rem 1rem',
                   background: 'var(--accent-dim)',
                   color: 'var(--accent)',
                   borderRadius: 'var(--radius)'

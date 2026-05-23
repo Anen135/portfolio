@@ -1,13 +1,13 @@
 export const page = {
-  // --- Основная информация ---
+  // --- Basic Information ---
   id: "wtf-ui",
   title: "WTF UI Library",
   subtitle: "Windows Terminal Friendly User Interface",
-  description: "Легковесный header-only фреймворк для создания нативных интерфейсов в терминале Windows, использующий прямой доступ к WinAPI.",
+  description: "A lightweight header-only framework for creating native interfaces in the Windows terminal, using direct WinAPI access.",
   version: "0.2.4-alpha",
   license: "MIT",
   
-  // --- Визуальное представление ---
+  // --- Visual Appearance ---
   appearance: {
     theme: "dark",
     primaryColor: "#0078d4",
@@ -16,7 +16,7 @@ export const page = {
     banner: "/assets/banners/hero-preview.png",
   },
 
-  // --- Технологический стек ---
+  // --- Technology Stack ---
   techStack: [
     { name: "C++", version: "20", icon: "cpp" },
     { name: "WinAPI", version: "Native", icon: "windows" },
@@ -24,39 +24,39 @@ export const page = {
     { name: "Windows Terminal", version: "Latest", icon: "terminal" }
   ],
 
-  // --- Ссылки и ресурсы ---
+  // --- Links and Resources ---
   links: {
-    github: "https://github.com/user/wtf-ui",
-    documentation: "https://docs.wtf-ui.dev",
-    discord: "https://discord.gg/yourlink",
-    npm: "", // Пусто, если не применимо
-    demo: "https://youtube.com/watch?v=example",
+    github: "https://github.com/Anen135/winui3/",
+    documentation: "",
+    discord: "",
+    npm: "", 
+    demo: "",
   },
 
-  // --- Ключевые особенности (Features) ---
+  // --- Key Features ---
   features: [
     {
       title: "Native Performance",
-      description: "Никаких тяжелых зависимостей. Прямое взаимодействие с консольными дескрипторами Windows.",
+      description: "No heavy dependencies. Direct interaction with Windows console handles.",
       icon: "zap"
     },
     {
       title: "Header-Only",
-      description: "Простая интеграция: просто подключите заголовочные файлы в ваш проект.",
+      description: "Simple integration: just include the header files in your project.",
       icon: "package"
     },
     {
       title: "Event-Driven",
-      description: "Удобная система обработки ввода (мышь, клавиатура, изменение размера) через коллбэки.",
+      description: "Convenient input handling system (mouse, keyboard, resize) via callbacks.",
       icon: "mouse-pointer"
     }
   ],
 
-  // --- Контент страницы (Structured Content) ---
+  // --- Structured Content ---
   sections: [
     {
       type: "code_snippet",
-      title: "Быстрый старт",
+      title: "Quick Start",
       language: "cpp",
       code: `#include "wtf_ui.hpp"
 
@@ -70,30 +70,30 @@ int main() {
     },
     {
       type: "text_block",
-      title: "Архитектура",
-      content: "WTF UI построена на принципах изоляции функциональных модулей и минимального оверхеда. Библиотека использует современные стандарты C++ для обеспечения безопасности типов при работе с низкоуровневыми системными вызовами."
+      title: "Architecture",
+      content: "WTF UI is built on the principles of functional module isolation and minimal overhead. The library uses modern C++ standards to ensure type safety when working with low-level system calls."
     },
     {
       type: "gallery",
-      title: "Скриншоты",
+      title: "Screenshots",
       images: [
-        { url: "/img/demo1.png", caption: "Пример кастомных кнопок" },
-        { url: "/img/demo2.png", caption: "Работа с таблицами и слоями" }
+        { url: "/img/demo1.png", caption: "Custom buttons example" },
+        { url: "/img/demo2.png", caption: "Working with tables and layers" }
       ]
     }
   ],
 
-  // --- Дорожная карта (Roadmap) ---
+  // --- Roadmap ---
   roadmap: [
-    { task: "Поддержка Unicode/UTF-8", status: "completed" },
-    { task: "Система анимаций", status: "in-progress" },
-    { task: "Кроссплатформенность (Linux/VT100)", status: "planned" }
+    { task: "Unicode/UTF-8 support", status: "completed" },
+    { task: "Animation system", status: "in-progress" },
+    { task: "Cross-platform (Linux/VT100)", status: "planned" }
   ],
 
-  // --- SEO Метаданные ---
+  // --- SEO Metadata ---
   metadata: {
     keywords: ["C++", "Terminal UI", "WinAPI", "TUI", "Windows Terminal", "Header-only"],
     ogImage: "https://wtf-ui.dev/og-image.png",
-    author: "YourName / TeamName"
+    author: "Anen135"
   }
 };

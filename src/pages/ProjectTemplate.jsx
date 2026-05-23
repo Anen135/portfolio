@@ -11,11 +11,11 @@ const SectionRenderer = ({ section }) => {
       return (
         <div className="glass-card" style={{ padding: '1.5rem', marginBottom: '2rem' }}>
           <h4 style={{ fontFamily: 'var(--font-display)', marginBottom: '1rem', fontSize: '1.1rem' }}>{section.title}</h4>
-          <pre style={{ 
-            background: "rgba(0,0,0,0.3)", 
-            color: "var(--text-primary)", 
-            padding: "1.25rem", 
-            borderRadius: "var(--radius)", 
+          <pre style={{
+            background: "rgba(0,0,0,0.3)",
+            color: "var(--text-primary)",
+            padding: "1.25rem",
+            borderRadius: "var(--radius)",
             overflowX: "auto",
             fontFamily: "var(--font-mono)",
             fontSize: "0.9rem",
@@ -40,11 +40,11 @@ const SectionRenderer = ({ section }) => {
             {section.images.map((img, idx) => (
               <figure key={idx} className="glass-card" style={{ padding: '0.5rem', overflow: 'hidden', margin: 0 }}>
                 <img src={img.url} alt={img.caption} style={{ width: "100%", borderRadius: "calc(var(--radius) - 4px)", display: 'block' }} />
-                <figcaption style={{ 
-                  fontSize: "0.85rem", 
-                  textAlign: "center", 
-                  padding: "0.75rem", 
-                  color: "var(--text-muted)" 
+                <figcaption style={{
+                  fontSize: "0.85rem",
+                  textAlign: "center",
+                  padding: "0.75rem",
+                  color: "var(--text-muted)"
                 }}>
                   {img.caption}
                 </figcaption>
@@ -88,13 +88,13 @@ const ProjectTemplate = () => {
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg, #f5f7fa)", color: "var(--text-primary, #000)" }}>
       <SimpleNavbar title={data.title || "Project"} backUrl="/portfolio/templates" backText="Back to Templates" />
-      <div style={{ 
-        padding: "4rem 2rem", 
-        maxWidth: "900px", 
-        margin: "0 auto", 
+      <div style={{
+        padding: "4rem 2rem",
+        maxWidth: "900px",
+        margin: "0 auto",
       }}>
         {/* Header */}
-        <motion.header 
+        <motion.header
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -106,18 +106,20 @@ const ProjectTemplate = () => {
           <h1 style={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)', marginBottom: '1rem', color: 'var(--text-primary)' }}>{data.title}</h1>
           <h2 style={{ color: "var(--accent)", fontWeight: "400", fontSize: '1.5rem', marginBottom: '1.5rem' }}>{data.subtitle}</h2>
           <p style={{ fontSize: "1.1rem", color: 'var(--text-secondary)', maxWidth: '600px', margin: '0 auto 2rem', lineHeight: '1.8' }}>{data.description}</p>
-          
+
           {/* Links */}
           <div style={{ display: "flex", gap: "1rem", justifyContent: "center" }}>
             {links?.github && <a href={links.github} className="btn btn-outline" target="_blank" rel="noopener noreferrer">GitHub</a>}
             {links?.documentation && <a href={links.documentation} className="btn btn-primary" target="_blank" rel="noopener noreferrer">Docs</a>}
+            {links?.discord && <a href={links.documentation} className="btn btn-primary" target="_blank" rel="noopener noreferrer">Discord</a>}
+            {links?.demo && <a href={links.documentation} className="btn btn-primary" target="_blank" rel="noopener noreferrer">Demo</a>}
           </div>
         </motion.header>
 
         <div className="divider" style={{ margin: '4rem 0' }} />
 
         {/* Tech Stack */}
-        <motion.section 
+        <motion.section
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -135,7 +137,7 @@ const ProjectTemplate = () => {
         </motion.section>
 
         {/* Features */}
-        <motion.section 
+        <motion.section
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -154,7 +156,7 @@ const ProjectTemplate = () => {
         </motion.section>
 
         {/* Dynamic Sections */}
-        <motion.section 
+        <motion.section
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -169,11 +171,11 @@ const ProjectTemplate = () => {
 
         {/* Roadmap */}
         {roadmap && (
-          <motion.section 
+          <motion.section
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="glass-card" 
+            className="glass-card"
             style={{ padding: "2.5rem", margin: "4rem 0" }}
           >
             <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', marginBottom: '1.5rem' }}>Roadmap</h3>
